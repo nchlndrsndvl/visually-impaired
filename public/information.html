@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Object Information | Object Recognition and Navigation</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @media (max-width: 1920px) {
+      .feature-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+    }
+    @media (max-width: 1080px) {
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    @media (max-width: 768px) {
+      .feature-grid {
+        grid-template-columns: repeat(1, 1fr) !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+      <a style="color: #fff;text-decoration: none;" href="/"><h1><i class="fas fa-leaf"></i>Object Recognition and Navigation </h1></a>
+      <nav>
+        <ul id="navMenu">
+          <li><a href="index.html">Home</a></li>
+          
+          <li><a href="/information">Object Information</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>Object Information</h2>
+      <div id="diseaseCatalog" class="feature-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2025 Object Recognition and Navigation. All rights reserved.&nbsp;</p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelector('.menu-toggle').addEventListener('click', () => {
+      document.querySelector('nav ul').classList.toggle('show');
+    });
+
+    async function loadDiseaseCatalog() {
+      try {
+        const res = await fetch("/api/disease-info");
+        const diseases = await res.json();
+        const container = document.getElementById("diseaseCatalog");
+        container.innerHTML = "";
+
+        diseases.forEach(d => {
+          const card = document.createElement("div");
+          card.className = "feature-card";
+          card.innerHTML = `
+            <img src="${d.image}" alt="${d.disease_type}" style="width:100%; height:150px; object-fit:cover; border-radius:5px; margin-bottom:15px;">
+            <h3>${d.disease_type}</h3>
+            <p><strong>Description:</strong> ${d.description}</p>
+            <p><strong>Prescription:</strong> ${d.prescription}</p>
+            <p><strong>Mitigation:</strong> ${d.mitigation}</p>
+            <a href="${d.source}" target="_blank">View Source</a>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error loading disease info:", err);
+      }
+    }
+
+    loadDiseaseCatalog();
+  </script>
+</body>
+
+</html>
