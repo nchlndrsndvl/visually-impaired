@@ -28,6 +28,13 @@ app.use('/pi', createProxyMiddleware({
   })
 );
 
+// ===== PROXY TO PYTHON ML SERVER =====
+app.use('/api', createProxyMiddleware({
+  target: 'http://127.0.0.1:8000',
+  changeOrigin: true,
+  pathRewrite: { '^/api': '' }   // /api/detect -> /detect
+}));
+
 // sample endpoints
 app.get('/health', (req, res) => res.json({ ok: true }));
 

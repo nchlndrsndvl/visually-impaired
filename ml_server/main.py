@@ -11,7 +11,7 @@ app.add_middleware(
 )
 
 # ====== SET THIS TO YOUR REAL PATH ======
-MODEL_PATH = r"D:\DHENISE PUSO\object detection\OBJECTVAT\runs\detect\fast_objvat_cpu\weights\best.pt"
+MODEL_PATH = r"D:\project\visually-impaired\object_detection\OBJECTVAT\runs\detect\objectvat_3cls_cpu2\weights\best.pt"
 # ========================================
 
 print("MODEL_PATH:", MODEL_PATH, "exists:", os.path.exists(MODEL_PATH))
