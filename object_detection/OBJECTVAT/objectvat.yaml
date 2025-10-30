@@ -1,4 +1,4 @@
-path: D:\project\visually-impaired\object_detection\OBJECTVAT\dataset_obj-retrain
+path: C:\Users\nchln\Desktop\Visually-Impaired\object detection\OBJECTVAT-retrain\dataset_obj-retrain
 train: images/train
 val: images/val
 names:
