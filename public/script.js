@@ -71,12 +71,32 @@ async function dataURLtoBlob(dataURL) {
 // ---------- Upload flow ----------
 // Upload button click handler
 const uploadBtn = document.getElementById('uploadBtn');
+let activeStream = null; // Track active camera stream
+
 if (uploadBtn && fileInput) {
   console.log('📤 Upload button listener attached');
   uploadBtn.addEventListener('click', () => {
     console.log('🖱️ Upload button clicked!');
+    // Stop camera when switching to upload
+    stopCamera();
     fileInput.click();
   });
+}
+
+// Helper function to stop camera
+function stopCamera() {
+  if (activeStream) {
+    console.log('🛑 Stopping camera stream');
+    activeStream.getTracks().forEach(track => track.stop());
+    activeStream = null;
+  }
+  if (videoEl) {
+    videoEl.srcObject = null;
+    videoEl.style.display = 'none';
+  }
+  if (captureBtn) {
+    captureBtn.style.display = 'none';
+  }
 }
 
 if (fileInput) {
@@ -109,8 +129,12 @@ if (fileInput) {
 // ---------- Camera start ----------
 async function startCamera() {
   console.log('📷 Starting camera...');
+  // Stop any existing stream first
+  stopCamera();
+  
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    activeStream = stream; // Store the stream so we can stop it later
     console.log('✅ Camera stream obtained');
     if (videoEl) {
       videoEl.srcObject = stream;
@@ -118,6 +142,9 @@ async function startCamera() {
       // Make sure video is visible
       videoEl.style.display = 'block';
       console.log('✅ Video display set to block');
+      // Hide image preview
+      if (imageEl) imageEl.style.display = 'none';
+      if (resultImg) resultImg.style.display = 'none';
       // Show capture button
       if (captureBtn) {
         captureBtn.style.display = 'inline-flex';
@@ -166,7 +193,19 @@ if (captureBtn && videoEl) {
     hiddenCanvas.getContext('2d').drawImage(videoEl, 0, 0);
     const blob = await new Promise(r => hiddenCanvas.toBlob(r, 'image/jpeg', 0.92));
     console.log('✅ Frame captured, blob size:', blob.size);
-    if (imageEl) imageEl.src = hiddenCanvas.toDataURL('image/jpeg', 0.92);
+    
+    // Show preview
+    if (imageEl) {
+      imageEl.src = hiddenCanvas.toDataURL('image/jpeg', 0.92);
+      imageEl.style.display = 'block';
+    }
+    
+    // Stop camera after capture
+    stopCamera();
+    
+    // Show start camera button again
+    if (startCamBtn) startCamBtn.style.display = 'inline-flex';
+    
     try { await postToDetectFromBlob(blob); }
     catch (e) { 
       console.error('❌ Analysis failed:', e);
